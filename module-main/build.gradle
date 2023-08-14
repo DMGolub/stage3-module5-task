@@ -1,0 +1,10 @@
+plugins {
+    id 'application'
+}
+
+mainClassName = 'com.mjc.school.Main'
+
+dependencies {
+    implementation project(':module-web')
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+}
