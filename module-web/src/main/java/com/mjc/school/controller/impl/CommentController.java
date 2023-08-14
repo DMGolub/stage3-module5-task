@@ -8,6 +8,10 @@ import com.mjc.school.service.dto.CommentResponseDto;
 import com.mjc.school.service.validator.annotation.Min;
 import com.mjc.school.service.validator.annotation.NotNull;
 import com.mjc.school.service.validator.annotation.Valid;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +35,8 @@ import static com.mjc.school.service.constants.Constants.ID_MIN_VALUE;
 
 @RestController
 @ApiVersion(1)
-@RequestMapping(path = API_ROOT_PATH, produces = {"application/JSON"})
+@RequestMapping(API_ROOT_PATH)
+@Api(produces = "application/json", value = "Operations for creating, updating, retrieving and deleting comments")
 public class CommentController implements BaseController<CommentResponseDto, CommentRequestDto, Long> {
 
 	private final CommentService commentService;
@@ -41,6 +46,15 @@ public class CommentController implements BaseController<CommentResponseDto, Com
 	}
 
 	@Override
+	@ApiOperation(value = "View all comments", response = List.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully retrieved all comments"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@GetMapping(COMMENT_ROOT_PATH)
 	public ResponseEntity<List<CommentResponseDto>> readAll(
 		@RequestParam(defaultValue = "10", required = false) @Min(1) final int limit,
@@ -51,6 +65,16 @@ public class CommentController implements BaseController<CommentResponseDto, Com
 	}
 
 	@Override
+	@ApiOperation(value = "Retrieve specific comment with the supplied id", response = CommentResponseDto.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully retrieved the comment with the supplied id"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@GetMapping(COMMENT_ROOT_PATH + "/{id:\\d+}")
 	public ResponseEntity<CommentResponseDto> readById(
 		@PathVariable @NotNull @Min(ID_MIN_VALUE) final Long id
@@ -58,6 +82,16 @@ public class CommentController implements BaseController<CommentResponseDto, Com
 		return ResponseEntity.ok(commentService.readById(id));
 	}
 
+	@ApiOperation(value = "Retrieve comments by supplied news id", response = List.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully retrieved comments by supplied news id"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@GetMapping(NEWS_ROOT_PATH + "/{newsId:\\d+}/comments")
 	public ResponseEntity<List<CommentResponseDto>> readCommentsByNewsId(
 		@PathVariable("newsId") @NotNull @Min(ID_MIN_VALUE) final Long newsId
@@ -67,6 +101,16 @@ public class CommentController implements BaseController<CommentResponseDto, Com
 
 	@Override
 	@PostMapping(path = COMMENT_ROOT_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Create new author", response = CommentResponseDto.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 201, message = "Successfully created new comment"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<CommentResponseDto> create(
 		@RequestBody @Valid final CommentRequestDto request
@@ -75,6 +119,16 @@ public class CommentController implements BaseController<CommentResponseDto, Com
 	}
 
 	@Override
+	@ApiOperation(value = "Update specific comment information", response = CommentResponseDto.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully updated comment information"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@PatchMapping(path = COMMENT_ROOT_PATH + "/{id:\\d+}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CommentResponseDto> update(
 		@PathVariable Long id,
@@ -87,6 +141,16 @@ public class CommentController implements BaseController<CommentResponseDto, Com
 	}
 
 	@Override
+	@ApiOperation(value = "Deletes specific comment with the supplied id")
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully deletes the specific comment"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@DeleteMapping(COMMENT_ROOT_PATH + "/{id:\\d+}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteById(@PathVariable @NotNull @Min(ID_MIN_VALUE) final Long id) {

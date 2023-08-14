@@ -8,6 +8,10 @@ import com.mjc.school.service.dto.AuthorResponseDto;
 import com.mjc.school.service.validator.annotation.Min;
 import com.mjc.school.service.validator.annotation.NotNull;
 import com.mjc.school.service.validator.annotation.Valid;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +35,8 @@ import static com.mjc.school.service.constants.Constants.ID_MIN_VALUE;
 
 @RestController
 @ApiVersion(1)
-@RequestMapping(path = API_ROOT_PATH, produces = {"application/JSON"})
+@RequestMapping(API_ROOT_PATH)
+@Api(produces = "application/json", value = "Operations for creating, updating, retrieving and deleting authors")
 public class AuthorController implements BaseController<AuthorResponseDto, AuthorRequestDto, Long> {
 
 	private final AuthorService authorService;
@@ -41,6 +46,15 @@ public class AuthorController implements BaseController<AuthorResponseDto, Autho
 	}
 
 	@Override
+	@ApiOperation(value = "View all authors", response = List.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully retrieved all authors"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@GetMapping(AUTHOR_ROOT_PATH)
 	public ResponseEntity<List<AuthorResponseDto>> readAll(
 		@RequestParam(defaultValue = "10", required = false) @Min(1) final int limit,
@@ -51,6 +65,16 @@ public class AuthorController implements BaseController<AuthorResponseDto, Autho
 	}
 
 	@Override
+	@ApiOperation(value = "Retrieve specific author with the supplied id", response = AuthorResponseDto.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully retrieved the author with the supplied id"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@GetMapping(AUTHOR_ROOT_PATH + "/{id:\\d+}")
 	public ResponseEntity<AuthorResponseDto> readById(
 		@PathVariable @NotNull @Min(ID_MIN_VALUE) final Long id
@@ -58,6 +82,16 @@ public class AuthorController implements BaseController<AuthorResponseDto, Autho
 		return ResponseEntity.ok(authorService.readById(id));
 	}
 
+	@ApiOperation(value = "Retrieve specific author by supplied news id", response = AuthorResponseDto.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully retrieved the author by supplied news id"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@GetMapping(NEWS_ROOT_PATH + "/{newsId:\\d+}/author")
 	public ResponseEntity<AuthorResponseDto> readByNewsId(
 		@PathVariable("newsId") @NotNull @Min(ID_MIN_VALUE) final Long newsId
@@ -67,12 +101,33 @@ public class AuthorController implements BaseController<AuthorResponseDto, Autho
 
 	@Override
 	@PostMapping(path = AUTHOR_ROOT_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Create new author", response = AuthorResponseDto.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 201, message = "Successfully created new author"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 409, message = "Author you are trying to save has a name conflict: name already exists"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<AuthorResponseDto> create(@RequestBody @Valid final AuthorRequestDto request) {
 		return new ResponseEntity<>(authorService.create(request), HttpStatus.CREATED);
 	}
 
 	@Override
+	@ApiOperation(value = "Update specific author information", response = AuthorRequestDto.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully updated author information"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@PatchMapping(path = AUTHOR_ROOT_PATH + "/{id:\\d+}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AuthorResponseDto> update(
 		@PathVariable Long id,
@@ -85,6 +140,16 @@ public class AuthorController implements BaseController<AuthorResponseDto, Autho
 	}
 
 	@Override
+	@ApiOperation(value = "Deletes specific author with the supplied id")
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully deletes the specific author"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@DeleteMapping(AUTHOR_ROOT_PATH + "/{id:\\d+}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteById(@PathVariable @NotNull @Min(ID_MIN_VALUE) final Long id) {

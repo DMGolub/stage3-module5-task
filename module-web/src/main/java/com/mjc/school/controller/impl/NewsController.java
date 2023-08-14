@@ -9,6 +9,10 @@ import com.mjc.school.service.query.NewsQueryParams;
 import com.mjc.school.service.validator.annotation.Min;
 import com.mjc.school.service.validator.annotation.NotNull;
 import com.mjc.school.service.validator.annotation.Valid;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +35,8 @@ import static com.mjc.school.service.constants.Constants.ID_MIN_VALUE;
 
 @RestController
 @ApiVersion(1)
-@RequestMapping(path = API_ROOT_PATH, produces = {"application/JSON"})
+@RequestMapping(API_ROOT_PATH)
+@Api(produces = "application/json", value = "Operations for creating, updating, retrieving and deleting news")
 public class NewsController implements BaseController<NewsResponseDto, NewsRequestDto, Long> {
 
 	private final NewsService newsService;
@@ -41,6 +46,15 @@ public class NewsController implements BaseController<NewsResponseDto, NewsReque
 	}
 
 	@Override
+	@ApiOperation(value = "Get all news", response = List.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully retrieved all news"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@GetMapping(NEWS_ROOT_PATH)
 	public ResponseEntity<List<NewsResponseDto>> readAll(
 		@RequestParam(defaultValue = "10", required = false) @Min(1) final int limit,
@@ -51,6 +65,16 @@ public class NewsController implements BaseController<NewsResponseDto, NewsReque
 	}
 
 	@Override
+	@ApiOperation(value = "Retrieve specific news with the supplied id", response = NewsResponseDto.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully retrieved the news with the supplied id"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@GetMapping(NEWS_ROOT_PATH + "/{id:\\d+}")
 	public ResponseEntity<NewsResponseDto> readById(
 		@PathVariable @NotNull @Min(ID_MIN_VALUE) final Long id
@@ -58,6 +82,16 @@ public class NewsController implements BaseController<NewsResponseDto, NewsReque
 		return ResponseEntity.ok(newsService.readById(id));
 	}
 
+	@ApiOperation(value = "Search news by supplied params", response = List.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully retrieved news"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@GetMapping(NEWS_ROOT_PATH + "/search")
 	public ResponseEntity<List<NewsResponseDto>> readNewsByParams(
 		@RequestParam(value = "tag_names", required = false) final List<String> tagNames,
@@ -73,12 +107,33 @@ public class NewsController implements BaseController<NewsResponseDto, NewsReque
 
 	@Override
 	@PostMapping(path = NEWS_ROOT_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Create new news", response = NewsResponseDto.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 201, message = "Successfully created new news"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 409, message = "News you are trying to save has a conflict: title already exists"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<NewsResponseDto> create(@RequestBody @Valid final NewsRequestDto request) {
 		return new ResponseEntity<>(newsService.create(request), HttpStatus.CREATED);
 	}
 
 	@Override
+	@ApiOperation(value = "Update specific news information", response = NewsResponseDto.class)
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully updated news information"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@PatchMapping(path = NEWS_ROOT_PATH + "/{id:\\d+}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<NewsResponseDto> update(
 		@PathVariable @NotNull @Min(ID_MIN_VALUE) final Long id,
@@ -91,6 +146,16 @@ public class NewsController implements BaseController<NewsResponseDto, NewsReque
 	}
 
 	@Override
+	@ApiOperation(value = "Deletes specific news with the supplied id")
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Successfully deletes the specific news"),
+		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
+		@ApiResponse(code = 401, message = "You are not authorized"),
+		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+		@ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+		@ApiResponse(code = 500, message = "Application failed to process the request"),
+		@ApiResponse(code = 503, message = "Api version you are trying to use is not supported")
+	})
 	@DeleteMapping(NEWS_ROOT_PATH + "/{id:\\d+}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteById(@PathVariable @NotNull @Min(ID_MIN_VALUE) final Long id) {
