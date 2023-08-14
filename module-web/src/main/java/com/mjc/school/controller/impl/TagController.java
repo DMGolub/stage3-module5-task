@@ -142,7 +142,7 @@ public class TagController implements BaseController<TagResponseDto, TagRequestD
 	@Override
 	@ApiOperation(value = "Deletes specific tag with the supplied id")
 	@ApiResponses(value = {
-		@ApiResponse(code = 200, message = "Successfully deletes the specific tag"),
+		@ApiResponse(code = 204, message = "Successfully deletes the specific tag"),
 		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
 		@ApiResponse(code = 401, message = "You are not authorized"),
 		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),

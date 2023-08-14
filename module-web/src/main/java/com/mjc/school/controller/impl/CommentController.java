@@ -143,7 +143,7 @@ public class CommentController implements BaseController<CommentResponseDto, Com
 	@Override
 	@ApiOperation(value = "Deletes specific comment with the supplied id")
 	@ApiResponses(value = {
-		@ApiResponse(code = 200, message = "Successfully deletes the specific comment"),
+		@ApiResponse(code = 204, message = "Successfully deletes the specific comment"),
 		@ApiResponse(code = 400, message = "Request violates any of existing constraints"),
 		@ApiResponse(code = 401, message = "You are not authorized"),
 		@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
